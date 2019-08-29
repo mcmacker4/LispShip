@@ -65,6 +65,11 @@ Token* parser_consume(Parser* parser) {
 }
 
 #define EOF_CHECK(parser) if(!parser_has_next(parser)) SYNTAX_ERROR("Unexpected EOF.")
+#define EXPECT_TOKEN(parser, token) if(parser_peek(parser)->type != (token)) \
+    SYNTAX_ERROR("Unexpected token.")\
+else {\
+    parser_consume(parser);\
+}
 
 Node* parse_any(Parser* parser);
 
@@ -97,6 +102,7 @@ Node* parse_list_or_pair(Parser* parser) {
             if (parser_peek(parser)->type == TK_DOT) {
                 parser_consume(parser);
                 right = parse_any(parser);
+                EXPECT_TOKEN(parser, TK_RPAREN)
             } else {
                 right = parse_list(parser);
             }
