@@ -1,8 +1,34 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "lexer.h"
-#include "parser.h"
+#include "../headers/lexer.h"
+#include "../headers/parser.h"
+#include "../headers/map.h"
 
+void print_tokens(List* tokens) {
+    for (int i = 0; i < tokens->size; i++) {
+        Token* token = ((Token*) tokens->data) + i;
+        switch (token->type) {
+            case TK_LPAREN:
+                printf("LPAREN");
+                break;
+            case TK_RPAREN:
+                printf("RPAREN");
+                break;
+            case TK_DOT:
+                printf("DOT");
+                break;
+            case TK_INTEGER:
+                printf("INTEGER(%d)", token->integer);
+                break;
+            case TK_SYMBOL:
+                printf("SYMBOL(%s)", token->str);
+                break;
+        }
+        if (i < tokens->size - 1) printf(", ");
+    }
+    printf("\n");
+}
 
 void print_node(Node* node) {
     switch (node->type) {
@@ -25,39 +51,34 @@ void print_node(Node* node) {
     }
 }
 
+#define LINE_MAX 128
 
 int main() {
 
-    const char* src = "(a (b . c) d e)";
+    char* linebuff = calloc(LINE_MAX, sizeof(char));
 
-    List tokens = tokenize(src, strlen(src));
+    while (1) {
 
-    for (int i = 0; i < tokens.size; i++) {
-        Token* token = ((Token*) tokens.data) + i;
-        switch (token->type) {
-            case TK_LPAREN:
-                printf("LPAREN");
-                break;
-            case TK_RPAREN:
-                printf("RPAREN");
-                break;
-            case TK_DOT:
-                printf("DOT");
-                break;
-            case TK_INTEGER:
-                printf("INTEGER(%d)", token->integer);
-                break;
-            case TK_SYMBOL:
-                printf("SYMBOL(%s)", token->str);
-                break;
+        printf("user> ");
+        fflush(stdout);
+
+        char* line = fgets(linebuff, LINE_MAX, stdin);
+
+        if (strcmp(line, ".exit\n") == 0) {
+            printf("Goodbye.");
+            break;
         }
-        if (i < tokens.size - 1) printf(", ");
-    }
-    printf("\n");
 
-    Node* node = parse(&tokens);
-    print_node(node);
-    printf("\n");
+        List tokens = tokenize(linebuff, strlen(line));
+
+        print_tokens(&tokens);
+        fflush(stdout);
+
+        Node* node = parse(&tokens);
+        print_node(node);
+        printf("\n");
+
+    }
 
     return 0;
 }

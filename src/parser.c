@@ -1,5 +1,5 @@
-#include "parser.h"
-#include "lexer.h"
+#include "../headers/parser.h"
+#include "../headers/lexer.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,15 +59,21 @@ Token* parser_consume(Parser* parser) {
     return ((Token*) parser->tokens->data) + parser->pos++;
 }
 
-#define SYNTAX_ERROR(str) {\
-    printf(str);\
+#define SYNTAX_ERROR(str, token) {\
+    printf("(%zu:%zu) %s\n", (token)->line, (token)->column, str);\
     exit(-1);\
 }
 
-#define EOF_CHECK(parser) if(!parser_has_next(parser)) SYNTAX_ERROR("Unexpected EOF.")
-#define EXPECT_TOKEN(parser, token) if(parser_peek(parser)->type != (token)) \
-    SYNTAX_ERROR("Unexpected token.")\
-else {\
+#define SYNTAX_ERROR_M(str) {\
+    printf("%s\n", str);\
+}
+
+#define EOF_CHECK(parser) if(!parser_has_next(parser)) SYNTAX_ERROR_M("Unexpected EOF.")
+
+#define EXPECT_TOKEN(parser, ttype) if(parser_peek(parser)->type != (ttype)) {\
+    printf("Expected token of type %d but found type %d", (ttype), parser_peek(parser)->type);\
+    exit(-1);\
+} else {\
     parser_consume(parser);\
 }
 
@@ -77,9 +83,10 @@ Node* parse_list(Parser* parser) {
     EOF_CHECK(parser)
     switch (parser_peek(parser)->type) {
         case TK_RPAREN:
+            parser_consume(parser);
             return node_new_nil();
         case TK_DOT:
-            SYNTAX_ERROR("Unexpected token.")
+            SYNTAX_ERROR("Unexpected dot while parsing list.", parser_peek(parser))
         default: {
             Node* left = parse_any(parser);
             Node* right = parse_list(parser);
@@ -95,7 +102,7 @@ Node* parse_list_or_pair(Parser* parser) {
             parser_consume(parser);
             return node_new_nil();
         case TK_DOT:
-            SYNTAX_ERROR("Unexpected token.")
+            SYNTAX_ERROR("Unexpected dot when parsing list or pair.", parser_peek(parser))
         default: {
             Node* left = parse_any(parser);
             Node* right;
@@ -122,11 +129,22 @@ Node* parse_any(Parser* parser) {
         case TK_INTEGER:
             return node_new_integer(parser_consume(parser)->integer);
         default:
-            SYNTAX_ERROR("Unexpected token.")
+            SYNTAX_ERROR("Unexpected token while parsing anything.", parser_peek(parser))
     }
+}
+
+Node* parse_top_list(Parser* parser) {
+    Node* left = parse_any(parser);
+    Node* right;
+    if (parser_has_next(parser)) {
+        right = parse_top_list(parser);
+    } else {
+        right = node_new_nil();
+    }
+    return node_new_pair(left, right);
 }
 
 Node* parse(List* tokens) {
     Parser parser = parser_new(tokens);
-    return parse_any(&parser);
+    return parse_top_list(&parser);
 }

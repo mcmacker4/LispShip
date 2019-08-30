@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 project(LispShit C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
 
-add_executable(LispShit src/main.c src/lexer.c src/lexer.h src/list.h src/string.h src/string.c src/list.c src/parser.c src/parser.h src/node.h)
+add_executable(LispShit src/main.c src/lexer.c headers/lexer.h headers/list.h headers/string.h src/string.c src/list.c src/parser.c headers/parser.h headers/node.h src/map.c headers/map.h src/eval.c headers/eval.h src/context.c headers/context.h)

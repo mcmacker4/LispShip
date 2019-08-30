@@ -1,6 +1,10 @@
 #ifndef LISPSHIT_NODE_H
 #define LISPSHIT_NODE_H
 
+#include <ctype.h>
+
+#include "string.h"
+
 typedef enum _NodeType {
     NODE_NIL,
     NODE_PAIR,

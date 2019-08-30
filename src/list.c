@@ -1,4 +1,4 @@
-#include "list.h"
+#include "../headers/list.h"
 
 void _list_grow(List* list, size_t el_size) {
     int newcap = list->capacity * 3 / 2;

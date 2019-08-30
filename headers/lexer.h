@@ -18,6 +18,7 @@ typedef struct _Token {
         const char* str;
         int32_t integer;
     };
+    size_t line, column;
 } Token;
 
 List tokenize(const char* source, size_t len);
