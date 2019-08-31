@@ -109,6 +109,9 @@ List tokenize(const char* source, size_t len) {
         } else if (tk_peek((&tokenizer)) == '.') {
             tk_consume(&tokenizer);
             tk_append_int(&tokenizer, TK_DOT, 0);
+        } else if (tk_peek((&tokenizer)) == '\'') {
+            tk_consume(&tokenizer);
+            tk_append_int(&tokenizer, TK_QUOTE, 0);
         } else if (tk_peek((&tokenizer)) >= '0' && tk_peek((&tokenizer)) <= '9') {
             tk_read_int(&tokenizer);
         } else if (tk_peek((&tokenizer)) >= 0x21 && tk_peek((&tokenizer)) <= 0x7E) {

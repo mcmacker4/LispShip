@@ -8,6 +8,7 @@ typedef enum _TokenType {
     TK_LPAREN,
     TK_RPAREN,
     TK_DOT,
+    TK_QUOTE,
     TK_SYMBOL,
     TK_INTEGER
 } TokenType;

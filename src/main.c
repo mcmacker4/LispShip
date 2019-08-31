@@ -3,7 +3,7 @@
 
 #include "../headers/lexer.h"
 #include "../headers/parser.h"
-#include "../headers/map.h"
+#include "../headers/eval.h"
 
 void print_tokens(List* tokens) {
     for (int i = 0; i < tokens->size; i++) {
@@ -18,6 +18,9 @@ void print_tokens(List* tokens) {
             case TK_DOT:
                 printf("DOT");
                 break;
+            case TK_QUOTE:
+                printf("QUOTE");
+                break;
             case TK_INTEGER:
                 printf("INTEGER(%d)", token->integer);
                 break;
@@ -28,27 +31,6 @@ void print_tokens(List* tokens) {
         if (i < tokens->size - 1) printf(", ");
     }
     printf("\n");
-}
-
-void print_node(Node* node) {
-    switch (node->type) {
-        case NODE_NIL:
-            printf("NIL");
-            break;
-        case NODE_INTEGER:
-            printf("%d", node->integer);
-            break;
-        case NODE_SYMBOL:
-            printf("%s", node->symbol);
-            break;
-        case NODE_PAIR:
-            printf("PAIR(");
-            print_node(node->left);
-            printf(", ");
-            print_node(node->right);
-            printf(")");
-            break;
-    }
 }
 
 #define LINE_MAX 128
@@ -71,12 +53,14 @@ int main() {
 
         List tokens = tokenize(linebuff, strlen(line));
 
-        print_tokens(&tokens);
-        fflush(stdout);
+        Node* ast = parse(&tokens);
 
-        Node* node = parse(&tokens);
-        print_node(node);
-        printf("\n");
+        while (ast->type != NODE_NIL) {
+            Node* result = eval(ast->left);
+            node_print(result);
+            printf("\n");
+            ast = ast->right;
+        }
 
     }
 

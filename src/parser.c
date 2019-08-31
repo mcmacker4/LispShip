@@ -17,35 +17,6 @@ Parser parser_new(List* tokens) {
     return parser;
 }
 
-Node* node_new_nil() {
-    Node* node = malloc(sizeof(Node));
-    node->type = NODE_NIL;
-    node->integer = 0;
-    return node;
-}
-
-Node* node_new_pair(Node* left, Node* right) {
-    Node* node = malloc(sizeof(Node));
-    node->type = NODE_PAIR;
-    node->left = left;
-    node->right = right;
-    return node;
-}
-
-Node* node_new_integer(int32_t integer) {
-    Node* node = malloc(sizeof(Node));
-    node->type = NODE_INTEGER;
-    node->integer = integer;
-    return node;
-}
-
-Node* node_new_symbol(String symbol) {
-    Node* node = malloc(sizeof(Node));
-    node->type = NODE_SYMBOL;
-    node->symbol = symbol;
-    return node;
-}
-
 
 int parser_has_next(Parser* parser) {
     return parser->pos < parser->tokens->size;
@@ -90,7 +61,9 @@ Node* parse_list(Parser* parser) {
         default: {
             Node* left = parse_any(parser);
             Node* right = parse_list(parser);
-            return node_new_pair(left, right);
+            Node* result = node_new_pair(left, right);
+            result->props |= NP_LIST;
+            return result;
         }
     }
 }
@@ -106,14 +79,18 @@ Node* parse_list_or_pair(Parser* parser) {
         default: {
             Node* left = parse_any(parser);
             Node* right;
+            uint8_t props = 0;
             if (parser_peek(parser)->type == TK_DOT) {
                 parser_consume(parser);
                 right = parse_any(parser);
                 EXPECT_TOKEN(parser, TK_RPAREN)
             } else {
                 right = parse_list(parser);
+                props |= NP_LIST;
             }
-            return node_new_pair(left, right);
+            Node* result = node_new_pair(left, right);
+            result->props = props;
+            return result;
         }
     }
 }
@@ -124,6 +101,11 @@ Node* parse_any(Parser* parser) {
         case TK_LPAREN:
             parser_consume(parser);
             return parse_list_or_pair(parser);
+        case TK_QUOTE:
+            parser_consume(parser);
+            Node* node = parse_any(parser);
+            node->props |= NP_LITERAL;
+            return node;
         case TK_SYMBOL:
             return node_new_symbol(parser_consume(parser)->str);
         case TK_INTEGER:

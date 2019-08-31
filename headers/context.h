@@ -2,7 +2,8 @@
 #define LISPSHIT_CONTEXT_H
 
 #include "map.h"
-#include "node.h"
+
+struct _Node;
 
 typedef struct _Context {
     struct _Context* parent;
@@ -10,10 +11,10 @@ typedef struct _Context {
 } Context;
 
 
-Context context_new();
+Context context_new(Context* parent);
 
-void context_define(Context* ctx, String name, Node* node);
+void context_define(Context* ctx, String name, struct _Node* node);
 
-Node* context_get(Context* ctx, String name);
+struct _Node* context_get(Context* ctx, String name);
 
 #endif //LISPSHIT_CONTEXT_H
