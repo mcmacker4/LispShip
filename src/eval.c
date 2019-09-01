@@ -13,7 +13,7 @@ Context eval_context_new() {
 
     CTX_DEF(&ctx, "print", &builtin_print);
     CTX_DEF(&ctx, "println", &builtin_println);
-    CTX_DEF(&ctx, "def!", &builtin_def);
+    CTX_DEF(&ctx, "def", &builtin_def);
     CTX_DEF(&ctx, "car", &builtin_car);
     CTX_DEF(&ctx, "cdr", &builtin_cdr);
     CTX_DEF(&ctx, "cons", &builtin_cons);
@@ -49,7 +49,7 @@ Node* eval_funcall(Context* ctx, Node* node) {
     }
 }
 
-Node* eval_ctx(Context* ctx, Node* node) {
+Node* eval(Context* ctx, Node* node) {
     if (node->props & NP_LITERAL) {
         return node;
     } else {
@@ -64,9 +64,4 @@ Node* eval_ctx(Context* ctx, Node* node) {
                 return eval_funcall(ctx, node);
         }
     }
-}
-
-Node* eval(Node* node) {
-    Context ctx = eval_context_new();
-    return eval_ctx(&ctx, node);
 }

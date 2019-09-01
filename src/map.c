@@ -33,8 +33,8 @@ void map_put(Map* map, String key, void* value) {
         }
     }
 
-    if (map->size == map->capacity)
-        map_grow(map);
+    if (map->size == map->capacity) map_grow(map);
+
     MapEntry entry;
     entry.key = key;
     entry.value = value;

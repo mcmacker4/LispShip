@@ -5,8 +5,8 @@
 #include "map.h"
 #include "context.h"
 
+Context eval_context_new();
 
-Node* eval_ctx(Context* ctx, Node* node);
-Node* eval(Node* node);
+Node* eval(Context* ctx, Node* node);
 
 #endif //LISPSHIT_EVAL_H

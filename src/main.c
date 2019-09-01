@@ -38,6 +38,7 @@ void print_tokens(List* tokens) {
 int main() {
 
     char* linebuff = calloc(LINE_MAX, sizeof(char));
+    Context ctx = eval_context_new();
 
     while (1) {
 
@@ -56,7 +57,7 @@ int main() {
         Node* ast = parse(&tokens);
 
         while (ast->type != NODE_NIL) {
-            Node* result = eval(ast->left);
+            Node* result = eval(&ctx, ast->left);
             node_print(result);
             printf("\n");
             ast = ast->right;

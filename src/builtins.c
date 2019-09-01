@@ -6,7 +6,7 @@
 
 Node* builtin_print(Context* context, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
-        node_print(eval_ctx(context, args->left));
+        node_print(eval(context, args->left));
     } else {
         printf("Invalid argument.");
     }
@@ -22,7 +22,7 @@ Node* builtin_println(Context* context, Node* args) {
 Node* builtin_def(Context* context, Node* args) {
     Node* name = node_car(args);
     if (name->type == NODE_SYMBOL) {
-        Node* result = eval_ctx(context, node_car(node_cdr(args)));
+        Node* result = eval(context, node_car(node_cdr(args)));
         context_define(context, name->symbol, result);
         return result;
     } else {
@@ -33,7 +33,7 @@ Node* builtin_def(Context* context, Node* args) {
 
 Node* builtin_car(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
-        return node_car(eval_ctx(ctx, args->left));
+        return node_car(eval(ctx, args->left));
     }
     printf("Invalid arguments.");
     return node_new_nil();
@@ -41,7 +41,7 @@ Node* builtin_car(Context* ctx, Node* args) {
 
 Node* builtin_cdr(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
-        return node_cdr(eval_ctx(ctx, args->left));
+        return node_cdr(eval(ctx, args->left));
     }
     printf("Invalid arguments.");
     return node_new_nil();
@@ -49,8 +49,8 @@ Node* builtin_cdr(Context* ctx, Node* args) {
 
 Node* builtin_cons(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
-        Node* left = eval_ctx(ctx, node_car(args));
-        Node* right = eval_ctx(ctx, node_car(node_cdr(args)));
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
         return node_cons(left, right);
     } else {
         printf("Invalid arguments.\n");
@@ -60,8 +60,8 @@ Node* builtin_cons(Context* ctx, Node* args) {
 
 Node* builtin_plus(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
-        Node* left = eval_ctx(ctx, node_car(args));
-        Node* right = eval_ctx(ctx, node_car(node_cdr(args)));
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer + right->integer);
         } else {
@@ -75,8 +75,8 @@ Node* builtin_plus(Context* ctx, Node* args) {
 
 Node* builtin_minus(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
-        Node* left = eval_ctx(ctx, node_car(args));
-        Node* right = eval_ctx(ctx, node_car(node_cdr(args)));
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer - right->integer);
         } else {
@@ -90,8 +90,8 @@ Node* builtin_minus(Context* ctx, Node* args) {
 
 Node* builtin_times(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
-        Node* left = eval_ctx(ctx, node_car(args));
-        Node* right = eval_ctx(ctx, node_car(node_cdr(args)));
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer * right->integer);
         } else {
@@ -105,8 +105,8 @@ Node* builtin_times(Context* ctx, Node* args) {
 
 Node* builtin_div(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
-        Node* left = eval_ctx(ctx, node_car(args));
-        Node* right = eval_ctx(ctx, node_car(node_cdr(args)));
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer / right->integer);
         } else {
