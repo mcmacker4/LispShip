@@ -1,5 +1,7 @@
 #include "../headers/list.h"
 
+// Adjacent memory list
+
 void _list_grow(List* list, size_t el_size) {
     int newcap = list->capacity * 3 / 2;
     list->data = realloc(list->data, newcap * el_size);
@@ -30,4 +32,26 @@ List list_new(size_t el_size) {
     list.capacity = LIST_INIT_SIZE;
     list.data = malloc(LIST_INIT_SIZE * el_size);
     return list;
+}
+
+// Linked list
+
+LinkedList linked_list_new() {
+    LinkedList list;
+    list.first = NULL;
+    list.last = NULL;
+    return list;
+}
+
+void linked_list_add(LinkedList* list, void* value) {
+    LLItem* entry = malloc(sizeof(LLItem));
+    entry->value = value;
+    entry->next = NULL;
+    if (list->first == NULL) {
+        list->first = entry;
+        list->last = entry;
+    } else {
+        list->last->next = entry;
+        list->last = entry;
+    }
 }

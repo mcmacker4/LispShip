@@ -1,42 +1,50 @@
 #include "../headers/map.h"
 
-#define MAP_CAPACITY 5
-
-void map_grow(Map* map) {
-    size_t newcap = map->capacity * 3 / 2;
-    map->entries = realloc(map->entries, newcap * sizeof(MapEntry));
-    map->capacity = newcap;
-}
 
 Map map_new() {
     Map map;
-    map.size = 0;
-    map.capacity = MAP_CAPACITY;
-    map.entries = malloc(MAP_CAPACITY * sizeof(MapEntry));
+    map.first = NULL;
+    map.last = NULL;
     return map;
 }
 
-void* map_get(Map* map, String key) {
-    for (size_t i = 0; i < map->size; i++) {
-        MapEntry* pair = map->entries + i;
-        if (pair->key == key) return pair->value;
+MapEntry* map_find_entry(Map* map, String key) {
+    MapEntry* entry = map->first;
+    while (entry != NULL) {
+        if (entry->key == key)
+            return entry;
+        entry = entry->next;
     }
     return NULL;
 }
 
+void* map_get(Map* map, String key) {
+    MapEntry* entry = map_find_entry(map, key);
+    if (entry != NULL)
+        return entry->value;
+    return NULL;
+}
+
+MapEntry* map_entry_new(String key, void* value) {
+    MapEntry* entry = malloc(sizeof(MapEntry));
+    entry->key = key;
+    entry->value = value;
+    entry->next = NULL;
+    return entry;
+}
+
 void map_put(Map* map, String key, void* value) {
-    for (size_t i = 0; i < map->size; i++) {
-        MapEntry* entry = map->entries + i;
-        if (entry->key == key) {
-            entry->value = value;
-            return;
+    MapEntry* entry = map_find_entry(map, key);
+    if (entry == NULL) {
+        entry = map_entry_new(key, value);
+        if (map->last == NULL) {
+            map->first = entry;
+            map->last = entry;
+        } else {
+            map->last->next = entry;
+            map->last = entry;
         }
+    } else {
+        entry->value = value;
     }
-
-    if (map->size == map->capacity) map_grow(map);
-
-    MapEntry entry;
-    entry.key = key;
-    entry.value = value;
-    map->entries[map->size++] = entry;
 }

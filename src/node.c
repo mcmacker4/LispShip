@@ -4,6 +4,12 @@
 
 static Node* nil_node = NULL;
 
+static List* all_nodes = 0;
+
+Node* node_new() {
+
+}
+
 Node* node_new_nil() {
     if (nil_node == NULL) {
         nil_node = malloc(sizeof(Node));
@@ -39,6 +45,15 @@ Node* node_new_symbol(String symbol) {
     return node;
 }
 
+Node* node_new_func(Node* args, Node* body) {
+    Node* node = malloc(sizeof(Node));
+    node->type = NODE_FUNC;
+    node->left = args;
+    node->right = body;
+    node->props = 0;
+    return node;
+}
+
 Node* node_new_nfunc(NativeFunc func) {
     Node* node = malloc(sizeof(Node));
     node->type = NODE_NATIVE_FUNC;
@@ -64,13 +79,13 @@ size_t node_list_length(Node* node) {
 
 
 Node* node_car(Node* node) {
-    if (node->type == NODE_PAIR)
+    if (node->type == NODE_PAIR || node->type == NODE_FUNC)
         return node->left;
     return node_new_nil();
 }
 
 Node* node_cdr(Node* node) {
-    if (node->type == NODE_PAIR)
+    if (node->type == NODE_PAIR || node->type == NODE_FUNC)
         return node->right;
     return node_new_nil();
 }
@@ -116,6 +131,9 @@ void node_print(Node* node) {
         }
         case NODE_NATIVE_FUNC:
             printf("native_func");
+            break;
+        case NODE_FUNC:
+            printf("func");
             break;
     }
 }

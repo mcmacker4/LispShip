@@ -36,6 +36,32 @@ Node* builtin_eval(Context* context, Node* args) {
     return eval_force(context, toeval);
 }
 
+Node* builtin_lambda(Context* context, Node* args) {
+
+    Node* fnargs = node_car(args);
+
+    // Check that fnargs is a list of symbols
+    Node* arg = fnargs;
+    while (node_car(arg)->type != NODE_NIL) {
+        if (node_car(arg)->type != NODE_SYMBOL) {
+            printf("Syntax error in lambda arguments.\n");
+            return node_new_nil();
+        }
+        arg = node_cdr(arg);
+    }
+
+    Node* body = node_cdr(args);
+    if (!node_is_list(body)) {
+        printf("Syntax error in lambda body.\n");
+        return node_new_nil();
+    }
+
+    return node_new_func(fnargs, body);
+
+}
+
+
+
 Node* builtin_car(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
         return node_car(eval(ctx, args->left));

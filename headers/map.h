@@ -6,12 +6,12 @@
 typedef struct _MapEntry {
     String key;
     void* value;
+    struct _MapEntry* next;
 } MapEntry;
 
 typedef struct _Map {
-    MapEntry* entries;
-    size_t size;
-    size_t capacity;
+    MapEntry* first;
+    MapEntry* last;
 } Map;
 
 Map map_new();
