@@ -7,6 +7,7 @@
 Node* builtin_print(Context* context, Node* args);
 Node* builtin_println(Context* context, Node* args);
 Node* builtin_def(Context* context, Node* args);
+Node* builtin_eval(Context* context, Node* args);
 
 Node* builtin_car(Context* ctx, Node* args);
 Node* builtin_cdr(Context* ctx, Node* args);

@@ -7,6 +7,7 @@
 
 Context eval_context_new();
 
+Node* eval_force(Context* ctx, Node* node);
 Node* eval(Context* ctx, Node* node);
 
 #endif //LISPSHIT_EVAL_H

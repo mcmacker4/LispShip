@@ -31,6 +31,11 @@ Node* builtin_def(Context* context, Node* args) {
     }
 }
 
+Node* builtin_eval(Context* context, Node* args) {
+    Node* toeval = eval(context, node_car(args));
+    return eval_force(context, toeval);
+}
+
 Node* builtin_car(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
         return node_car(eval(ctx, args->left));
