@@ -66,5 +66,7 @@ int main() {
 
     }
 
+    context_destroy(&ctx);
+
     return 0;
 }

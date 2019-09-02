@@ -3,26 +3,27 @@
 
 #include <stdio.h>
 
-Node* builtin_print(Context* context, Node* args) {
+
+Node* builtin_print(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
-        node_print(eval(context, args->left));
+        node_print(eval(ctx, args->left));
     } else {
         printf("Invalid argument.");
     }
     return node_nil();
 }
 
-Node* builtin_println(Context* context, Node* args) {
-    Node* result = builtin_print(context, args);
+Node* builtin_println(Context* ctx, Node* args) {
+    Node* result = builtin_print(ctx, args);
     printf("\n");
     return result;
 }
 
-Node* builtin_def(Context* context, Node* args) {
+Node* builtin_def(Context* ctx, Node* args) {
     Node* name = node_car(args);
     if (name->type == NODE_SYMBOL) {
-        Node* result = eval(context, node_car(node_cdr(args)));
-        context_define(context, name->symbol, result);
+        Node* result = eval(ctx, node_car(node_cdr(args)));
+        context_define(ctx, name->symbol, result);
         return result;
     } else {
         printf("Invalid arguments.\n");
@@ -30,12 +31,12 @@ Node* builtin_def(Context* context, Node* args) {
     }
 }
 
-Node* builtin_eval(Context* context, Node* args) {
-    Node* toeval = eval(context, node_car(args));
-    return eval_force(context, toeval);
+Node* builtin_eval(Context* ctx, Node* args) {
+    Node* toeval = eval(ctx, node_car(args));
+    return eval_force(ctx, toeval);
 }
 
-Node* builtin_lambda(Context* context, Node* args) {
+Node* builtin_lambda(Context* ctx, Node* args) {
 
     Node* fnargs = node_car(args);
 
@@ -60,12 +61,11 @@ Node* builtin_lambda(Context* context, Node* args) {
 }
 
 
-
 Node* builtin_car(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
         return node_car(eval(ctx, args->left));
     }
-    printf("Invalid arguments.");
+    printf("Invalid arguments.\n");
     return node_nil();
 }
 
@@ -73,7 +73,7 @@ Node* builtin_cdr(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
         return node_cdr(eval(ctx, args->left));
     }
-    printf("Invalid arguments.");
+    printf("Invalid arguments.\n");
     return node_nil();
 }
 
@@ -95,11 +95,11 @@ Node* builtin_plus(Context* ctx, Node* args) {
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer + right->integer);
         } else {
-            printf("Invalid argument types.");
+            printf("Invalid argument types.\n");
             return node_nil();
         }
     } else {
-        printf("Invalid number of arguments.");
+        printf("Invalid number of arguments.\n");
         return node_nil();
     }
 }
@@ -111,11 +111,11 @@ Node* builtin_minus(Context* ctx, Node* args) {
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer - right->integer);
         } else {
-            printf("Invalid argument types.");
+            printf("Invalid argument types.\n");
             return node_nil();
         }
     } else {
-        printf("Invalid number of arguments.");
+        printf("Invalid number of arguments.\n");
         return node_nil();
     }
 }
@@ -127,11 +127,11 @@ Node* builtin_times(Context* ctx, Node* args) {
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer * right->integer);
         } else {
-            printf("Invalid argument types.");
+            printf("Invalid argument types.\n");
             return node_nil();
         }
     } else {
-        printf("Invalid number of arguments.");
+        printf("Invalid number of arguments.\n");
         return node_nil();
     }
 }
@@ -143,11 +143,84 @@ Node* builtin_div(Context* ctx, Node* args) {
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer / right->integer);
         } else {
-            printf("Invalid argument types.");
+            printf("Invalid argument types.\n");
             return node_nil();
         }
     } else {
-        printf("Invalid number of arguments.");
+        printf("Invalid number of arguments.\n");
         return node_nil();
     }
 }
+
+
+Node* builtin_eq(Context* ctx, Node* args) {
+    if (node_is_list(args) && node_list_length(args) == 2) {
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
+        switch (left->type) {
+            case NODE_NIL:
+                return right->type == NODE_NIL ? node_true() : node_false();
+            case NODE_PAIR: {
+                if (right->type == NODE_PAIR)
+                    return left == right ? node_true() : node_false();
+                return node_false();
+            }
+            case NODE_INTEGER: {
+                if (right->type == NODE_INTEGER)
+                    return left->integer == right->integer ? node_true() : node_false();
+                return node_false();
+            }
+            case NODE_SYMBOL: {
+                if (right->type == NODE_SYMBOL)
+                    return left->symbol == right->symbol ? node_true() : node_false();
+                return node_false();
+            }
+            case NODE_FUNC: {
+                if (right->type == NODE_FUNC)
+                    return left == right ? node_true() : node_false();
+                return node_false();
+            }
+            case NODE_NATIVE_FUNC: {
+                if (right->type == NODE_NATIVE_FUNC)
+                    return left->func == right->func ? node_true() : node_false();
+                return node_false();
+            }
+        }
+    } else {
+        printf("Invalid number of arguments.\n");
+        return node_nil();
+    }
+}
+
+Node* builtin_gt(Context* ctx, Node* args) {
+    if (node_is_list(args) && node_list_length(args) == 2) {
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
+        if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
+            return left->integer > right->integer ? node_true() : node_false();
+        } else {
+            printf("Invalid argument types.\n");
+            return node_nil();
+        }
+    } else {
+        printf("Invalid number of arguments.\n");
+        return node_nil();
+    }
+}
+
+Node* builtin_lt(Context* ctx, Node* args) {
+    if (node_is_list(args) && node_list_length(args) == 2) {
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
+        if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
+            return left->integer < right->integer ? node_true() : node_false();
+        } else {
+            printf("Invalid argument types.\n");
+            return node_nil();
+        }
+    } else {
+        printf("Invalid number of arguments.\n");
+        return node_nil();
+    }
+}
+

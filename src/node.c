@@ -35,13 +35,13 @@ Node* node_true() {
 }
 
 Node* node_false() {
-    if (true == NULL) {
-        true = malloc(sizeof(Node));
-        true->type = NODE_SYMBOL;
-        true->symbol = string_intern("false");
-        true->props = 0;
+    if (false == NULL) {
+        false = malloc(sizeof(Node));
+        false->type = NODE_SYMBOL;
+        false->symbol = string_intern("false");
+        false->props = 0;
     }
-    return true;
+    return false;
 }
 
 Node* node_new_pair(Node* left, Node* right) {

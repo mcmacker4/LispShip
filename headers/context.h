@@ -17,4 +17,6 @@ void context_define(Context* ctx, String name, struct _Node* node);
 
 struct _Node* context_get(Context* ctx, String name);
 
+void context_destroy(Context* ctx);
+
 #endif //LISPSHIT_CONTEXT_H

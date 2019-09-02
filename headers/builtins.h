@@ -4,11 +4,11 @@
 #include "node.h"
 #include "context.h"
 
-Node* builtin_print(Context* context, Node* args);
-Node* builtin_println(Context* context, Node* args);
-Node* builtin_def(Context* context, Node* args);
-Node* builtin_eval(Context* context, Node* args);
-Node* builtin_lambda(Context* context, Node* args);
+Node* builtin_print(Context* ctx, Node* args);
+Node* builtin_println(Context* ctx, Node* args);
+Node* builtin_def(Context* ctx, Node* args);
+Node* builtin_eval(Context* ctx, Node* args);
+Node* builtin_lambda(Context* ctx, Node* args);
 
 Node* builtin_car(Context* ctx, Node* args);
 Node* builtin_cdr(Context* ctx, Node* args);
@@ -18,5 +18,9 @@ Node* builtin_plus(Context* ctx, Node* args);
 Node* builtin_minus(Context* ctx, Node* args);
 Node* builtin_times(Context* ctx, Node* args);
 Node* builtin_div(Context* ctx, Node* args);
+
+Node* builtin_eq(Context* ctx, Node* args);
+Node* builtin_gt(Context* ctx, Node* args);
+Node* builtin_lt(Context* ctx, Node* args);
 
 #endif //LISPSHIT_BUILTINS_H

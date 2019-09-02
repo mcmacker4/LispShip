@@ -20,4 +20,6 @@ void* map_get(Map* map, String key);
 
 void map_put(Map* map, String key, void* value);
 
+void map_free(Map* map);
+
 #endif //LISPSHIT_MAP_H

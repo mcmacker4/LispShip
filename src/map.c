@@ -50,3 +50,14 @@ void map_put(Map* map, String key, void* value) {
         entry->value = value;
     }
 }
+
+void map_free(Map* map) {
+    MapEntry* entry = map->first;
+    while (entry != NULL) {
+        MapEntry* next = entry->next;
+        free(entry);
+        entry = next;
+    }
+    map->first = NULL;
+    map->last = NULL;
+}

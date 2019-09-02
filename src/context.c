@@ -23,3 +23,7 @@ struct _Node* context_get(Context* ctx, String name) {
     }
     return (struct _Node*) result;
 }
+
+void context_destroy(Context* ctx) {
+    map_free(&ctx->variables);
+}

@@ -27,6 +27,9 @@ Context eval_context_new() {
     CTX_DEF_FUN(&ctx, "-", &builtin_minus);
     CTX_DEF_FUN(&ctx, "*", &builtin_times);
     CTX_DEF_FUN(&ctx, "/", &builtin_div);
+    CTX_DEF_FUN(&ctx, "=", &builtin_eq);
+    CTX_DEF_FUN(&ctx, ">", &builtin_gt);
+    CTX_DEF_FUN(&ctx, "<", &builtin_lt);
 
 #undef CTX_DEF_FUN
 
@@ -52,6 +55,7 @@ Node* eval_funcall(Context* ctx, Node* func, Node* args) {
         result = eval(&context, ast->left);
         ast = node_cdr(ast);
     }
+    context_destroy(&context);
     return result;
 }
 
