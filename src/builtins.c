@@ -1,6 +1,5 @@
 #include "../headers/builtins.h"
 #include "../headers/eval.h"
-#include "../headers/node.h"
 
 #include <stdio.h>
 
@@ -97,6 +96,7 @@ Node* builtin_plus(Context* ctx, Node* args) {
             return node_new_integer(left->integer + right->integer);
         } else {
             printf("Invalid argument types.");
+            return node_nil();
         }
     } else {
         printf("Invalid number of arguments.");
@@ -112,6 +112,7 @@ Node* builtin_minus(Context* ctx, Node* args) {
             return node_new_integer(left->integer - right->integer);
         } else {
             printf("Invalid argument types.");
+            return node_nil();
         }
     } else {
         printf("Invalid number of arguments.");
@@ -127,6 +128,7 @@ Node* builtin_times(Context* ctx, Node* args) {
             return node_new_integer(left->integer * right->integer);
         } else {
             printf("Invalid argument types.");
+            return node_nil();
         }
     } else {
         printf("Invalid number of arguments.");
@@ -142,6 +144,7 @@ Node* builtin_div(Context* ctx, Node* args) {
             return node_new_integer(left->integer / right->integer);
         } else {
             printf("Invalid argument types.");
+            return node_nil();
         }
     } else {
         printf("Invalid number of arguments.");

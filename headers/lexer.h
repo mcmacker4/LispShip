@@ -1,8 +1,9 @@
-#include <stdint.h>
-#include "list.h"
-
 #ifndef LISPSHIT_LEXER_H
 #define LISPSHIT_LEXER_H
+
+#include <stdint.h>
+
+#include "list.h"
 
 typedef enum _TokenType {
     TK_LPAREN,

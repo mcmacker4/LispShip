@@ -1,5 +1,7 @@
 #include "../headers/map.h"
 
+#include <stddef.h>
+#include <malloc.h>
 
 Map map_new() {
     Map map;

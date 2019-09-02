@@ -1,5 +1,4 @@
 #include "../headers/eval.h"
-#include "../headers/context.h"
 #include "../headers/builtins.h"
 
 #include <stdio.h>

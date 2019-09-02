@@ -1,6 +1,9 @@
 #include "../headers/string.h"
 #include "../headers/list.h"
 
+#include <malloc.h>
+#include <string.h>
+
 
 List _interns;
 int initialized = 0;

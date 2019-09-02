@@ -1,5 +1,8 @@
 #include "../headers/list.h"
 
+#include <malloc.h>
+#include <memory.h>
+
 // Adjacent memory list
 
 void _list_grow(List* list, size_t el_size) {
@@ -11,6 +14,8 @@ void _list_grow(List* list, size_t el_size) {
 void list_free(List* list) {
     free(list->data);
     list->data = NULL;
+    list->capacity = 0;
+    list->size = 0;
 }
 
 void list_append(List* list, void* value, size_t el_size) {
@@ -22,7 +27,7 @@ void list_append(List* list, void* value, size_t el_size) {
 }
 
 void list_fit(List* list, size_t el_size) {
-    realloc(list->data, list->size * el_size);
+    list->data = realloc(list->data, list->size * el_size);
     list->capacity = list->size;
 }
 

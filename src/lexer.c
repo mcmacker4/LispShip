@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-
 #include "../headers/lexer.h"
 #include "../headers/string.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
 
 typedef struct _Tokenizer {
     const char* source;

@@ -1,9 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "../headers/lexer.h"
 #include "../headers/parser.h"
 #include "../headers/eval.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <malloc.h>
 
 void print_tokens(List* tokens) {
     for (int i = 0; i < tokens->size; i++) {

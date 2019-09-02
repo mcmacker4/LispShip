@@ -1,8 +1,7 @@
 #ifndef LISPSHIT_LIST_H
 #define LISPSHIT_LIST_H
 
-#include <malloc.h>
-#include <mem.h>
+#include <stddef.h>
 
 #define LIST_INIT_SIZE 4
 

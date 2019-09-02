@@ -1,7 +1,8 @@
 #ifndef LISPSHIT_NODE_H
 #define LISPSHIT_NODE_H
 
-#include <ctype.h>
+#include <stdint.h>
+#include <stddef.h>
 
 #include "string.h"
 

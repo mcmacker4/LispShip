@@ -1,6 +1,8 @@
 #include "../headers/node.h"
+#include "../headers/list.h"
 
-#include "stdio.h"
+#include <stdio.h>
+#include <malloc.h>
 
 static Node* nil = NULL;
 static Node* true = NULL;

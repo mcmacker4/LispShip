@@ -2,7 +2,6 @@
 #define LISPSHIT_EVAL_H
 
 #include "node.h"
-#include "map.h"
 #include "context.h"
 
 Context eval_context_new();
