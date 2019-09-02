@@ -60,8 +60,8 @@ Node* eval_funcall(Context* ctx, Node* func, Node* args) {
 }
 
 Node* eval_list(Context* ctx, Node* node) {
-    Node* name = node->left;
-    Node* args = node->right;
+    Node* name = node_car(node);
+    Node* args = node_cdr(node);
     if (name->type == NODE_SYMBOL) {
         Node* func = context_get(ctx, name->symbol);
         if (func == NULL) {
@@ -76,6 +76,14 @@ Node* eval_list(Context* ctx, Node* node) {
                 printf("%s is not a function.\n", name->symbol);
                 return node_nil();
             }
+        }
+    } else if (name->type == NODE_PAIR) {
+        name = eval(ctx, name);
+        if (name->type == NODE_FUNC) {
+            return eval_funcall(ctx, name, args);
+        } else {
+            printf("Syntax error in funcall. (%d)\n", name->type);
+            return node_nil();
         }
     } else {
         printf("Syntax error in funcall. (%d)\n", name->type);

@@ -1,5 +1,6 @@
 #include "../headers/node.h"
 #include "../headers/list.h"
+#include "../headers/gc.h"
 
 #include <stdio.h>
 #include <malloc.h>
@@ -8,10 +9,11 @@ static Node* nil = NULL;
 static Node* true = NULL;
 static Node* false = NULL;
 
-static List* all_nodes = 0;
 
 Node* node_new() {
-
+    Node* node = malloc(sizeof(Node));
+    gc_register(node);
+    return node;
 }
 
 Node* node_nil() {
@@ -45,7 +47,7 @@ Node* node_false() {
 }
 
 Node* node_new_pair(Node* left, Node* right) {
-    Node* node = malloc(sizeof(Node));
+    Node* node = node_new();
     node->type = NODE_PAIR;
     node->left = left;
     node->right = right;
@@ -54,7 +56,7 @@ Node* node_new_pair(Node* left, Node* right) {
 }
 
 Node* node_new_integer(int32_t integer) {
-    Node* node = malloc(sizeof(Node));
+    Node* node = node_new();
     node->type = NODE_INTEGER;
     node->integer = integer;
     node->props = 0;
@@ -62,7 +64,7 @@ Node* node_new_integer(int32_t integer) {
 }
 
 Node* node_new_symbol(String symbol) {
-    Node* node = malloc(sizeof(Node));
+    Node* node = node_new();
     node->type = NODE_SYMBOL;
     node->symbol = symbol;
     node->props = 0;
@@ -70,7 +72,7 @@ Node* node_new_symbol(String symbol) {
 }
 
 Node* node_new_func(Node* args, Node* body) {
-    Node* node = malloc(sizeof(Node));
+    Node* node = node_new();
     node->type = NODE_FUNC;
     node->left = args;
     node->right = body;
@@ -160,4 +162,11 @@ void node_print(Node* node) {
             printf("func");
             break;
     }
+}
+
+
+void node_cleanup() {
+    free(nil);
+    free(true);
+    free(false);
 }

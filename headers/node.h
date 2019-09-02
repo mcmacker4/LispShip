@@ -59,4 +59,6 @@ Node* node_cons(Node* left, Node* right);
 
 void node_print(Node* node);
 
+void node_cleanup();
+
 #endif //LISPSHIT_NODE_H

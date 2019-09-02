@@ -25,7 +25,7 @@ List list_new(size_t el_size);
 
 typedef struct _LLItem {
     void* value;
-    void* next;
+    struct _LLItem* next;
 } LLItem;
 
 typedef struct _LinkedList {

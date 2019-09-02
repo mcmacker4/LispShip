@@ -1,6 +1,7 @@
 #include "../headers/lexer.h"
 #include "../headers/parser.h"
 #include "../headers/eval.h"
+#include "../headers/gc.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +39,7 @@ void print_tokens(List* tokens) {
 
 int main() {
 
-    char* linebuff = calloc(LINE_MAX, sizeof(char));
+    char* linebuff = malloc(LINE_MAX);
     Context ctx = eval_context_new();
 
     while (1) {
@@ -64,9 +65,15 @@ int main() {
             ast = ast->right;
         }
 
+        list_free(&tokens);
+
+        gc_cleanup(&ctx);
+
     }
 
+    free(linebuff);
     context_destroy(&ctx);
+    gc_cleanup(NULL);
 
     return 0;
 }
