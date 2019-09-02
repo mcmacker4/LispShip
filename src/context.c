@@ -18,7 +18,7 @@ struct _Node* context_get(Context* ctx, String name) {
         if (ctx->parent != NULL) {
             return context_get(ctx->parent, name);
         } else {
-            return node_new_nil();
+            return node_nil();
         }
     }
     return (struct _Node*) result;

@@ -55,7 +55,7 @@ Node* parse_list(Parser* parser) {
     switch (parser_peek(parser)->type) {
         case TK_RPAREN:
             parser_consume(parser);
-            return node_new_nil();
+            return node_nil();
         case TK_DOT:
             SYNTAX_ERROR("Unexpected dot while parsing list.", parser_peek(parser))
         default: {
@@ -73,7 +73,7 @@ Node* parse_list_or_pair(Parser* parser) {
     switch (parser_peek(parser)->type) {
         case TK_RPAREN:
             parser_consume(parser);
-            return node_new_nil();
+            return node_nil();
         case TK_DOT:
             SYNTAX_ERROR("Unexpected dot when parsing list or pair.", parser_peek(parser))
         default: {
@@ -121,7 +121,7 @@ Node* parse_top_list(Parser* parser) {
     if (parser_has_next(parser)) {
         right = parse_top_list(parser);
     } else {
-        right = node_new_nil();
+        right = node_nil();
     }
     return node_new_pair(left, right);
 }

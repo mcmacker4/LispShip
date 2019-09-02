@@ -40,7 +40,9 @@ typedef struct _Node {
 typedef struct _Node*(*NativeFunc)(struct _Context*, struct _Node*);
 
 
-Node* node_new_nil();
+Node* node_nil();
+Node* node_true();
+Node* node_false();
 Node* node_new_pair(Node* left, Node* right);
 Node* node_new_integer(int32_t integer);
 Node* node_new_symbol(String symbol);

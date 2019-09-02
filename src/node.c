@@ -2,7 +2,9 @@
 
 #include "stdio.h"
 
-static Node* nil_node = NULL;
+static Node* nil = NULL;
+static Node* true = NULL;
+static Node* false = NULL;
 
 static List* all_nodes = 0;
 
@@ -10,14 +12,34 @@ Node* node_new() {
 
 }
 
-Node* node_new_nil() {
-    if (nil_node == NULL) {
-        nil_node = malloc(sizeof(Node));
-        nil_node->type = NODE_NIL;
-        nil_node->integer = 0;
-        nil_node->props = 0;
+Node* node_nil() {
+    if (nil == NULL) {
+        nil = malloc(sizeof(Node));
+        nil->type = NODE_NIL;
+        nil->integer = 0;
+        nil->props = 0;
     }
-    return nil_node;
+    return nil;
+}
+
+Node* node_true() {
+    if (true == NULL) {
+        true = malloc(sizeof(Node));
+        true->type = NODE_SYMBOL;
+        true->symbol = string_intern("true");
+        true->props = 0;
+    }
+    return true;
+}
+
+Node* node_false() {
+    if (true == NULL) {
+        true = malloc(sizeof(Node));
+        true->type = NODE_SYMBOL;
+        true->symbol = string_intern("false");
+        true->props = 0;
+    }
+    return true;
 }
 
 Node* node_new_pair(Node* left, Node* right) {
@@ -81,13 +103,13 @@ size_t node_list_length(Node* node) {
 Node* node_car(Node* node) {
     if (node->type == NODE_PAIR || node->type == NODE_FUNC)
         return node->left;
-    return node_new_nil();
+    return node_nil();
 }
 
 Node* node_cdr(Node* node) {
     if (node->type == NODE_PAIR || node->type == NODE_FUNC)
         return node->right;
-    return node_new_nil();
+    return node_nil();
 }
 
 Node* node_cons(Node* left, Node* right) {

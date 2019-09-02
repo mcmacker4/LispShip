@@ -10,7 +10,7 @@ Node* builtin_print(Context* context, Node* args) {
     } else {
         printf("Invalid argument.");
     }
-    return node_new_nil();
+    return node_nil();
 }
 
 Node* builtin_println(Context* context, Node* args) {
@@ -27,7 +27,7 @@ Node* builtin_def(Context* context, Node* args) {
         return result;
     } else {
         printf("Invalid arguments.\n");
-        return node_new_nil();
+        return node_nil();
     }
 }
 
@@ -45,7 +45,7 @@ Node* builtin_lambda(Context* context, Node* args) {
     while (node_car(arg)->type != NODE_NIL) {
         if (node_car(arg)->type != NODE_SYMBOL) {
             printf("Syntax error in lambda arguments.\n");
-            return node_new_nil();
+            return node_nil();
         }
         arg = node_cdr(arg);
     }
@@ -53,7 +53,7 @@ Node* builtin_lambda(Context* context, Node* args) {
     Node* body = node_cdr(args);
     if (!node_is_list(body)) {
         printf("Syntax error in lambda body.\n");
-        return node_new_nil();
+        return node_nil();
     }
 
     return node_new_func(fnargs, body);
@@ -67,7 +67,7 @@ Node* builtin_car(Context* ctx, Node* args) {
         return node_car(eval(ctx, args->left));
     }
     printf("Invalid arguments.");
-    return node_new_nil();
+    return node_nil();
 }
 
 Node* builtin_cdr(Context* ctx, Node* args) {
@@ -75,7 +75,7 @@ Node* builtin_cdr(Context* ctx, Node* args) {
         return node_cdr(eval(ctx, args->left));
     }
     printf("Invalid arguments.");
-    return node_new_nil();
+    return node_nil();
 }
 
 Node* builtin_cons(Context* ctx, Node* args) {
@@ -85,7 +85,7 @@ Node* builtin_cons(Context* ctx, Node* args) {
         return node_cons(left, right);
     } else {
         printf("Invalid arguments.\n");
-        return node_new_nil();
+        return node_nil();
     }
 }
 
@@ -100,7 +100,7 @@ Node* builtin_plus(Context* ctx, Node* args) {
         }
     } else {
         printf("Invalid number of arguments.");
-        return node_new_nil();
+        return node_nil();
     }
 }
 
@@ -115,7 +115,7 @@ Node* builtin_minus(Context* ctx, Node* args) {
         }
     } else {
         printf("Invalid number of arguments.");
-        return node_new_nil();
+        return node_nil();
     }
 }
 
@@ -130,7 +130,7 @@ Node* builtin_times(Context* ctx, Node* args) {
         }
     } else {
         printf("Invalid number of arguments.");
-        return node_new_nil();
+        return node_nil();
     }
 }
 
@@ -145,6 +145,6 @@ Node* builtin_div(Context* ctx, Node* args) {
         }
     } else {
         printf("Invalid number of arguments.");
-        return node_new_nil();
+        return node_nil();
     }
 }

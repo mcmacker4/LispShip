@@ -14,7 +14,7 @@ Context eval_context_new() {
 #define CTX_DEF_FUN(ctx, name, func)\
     context_define((ctx), string_intern(name), node_new_nfunc(func))
 
-    CTX_DEF(&ctx, "nil", node_new_nil());
+    CTX_DEF(&ctx, "nil", node_nil());
 
     CTX_DEF_FUN(&ctx, "print", &builtin_print);
     CTX_DEF_FUN(&ctx, "println", &builtin_println);
@@ -48,7 +48,7 @@ Node* eval_funcall(Context* ctx, Node* func, Node* args) {
     Context context = context_new(ctx);
     set_ctx_args(&context, func->left, args);
     Node* ast = func->right;
-    Node* result = node_new_nil();
+    Node* result = node_nil();
     while (ast->type != NODE_NIL) {
         result = eval(&context, ast->left);
         ast = node_cdr(ast);
@@ -63,7 +63,7 @@ Node* eval_list(Context* ctx, Node* node) {
         Node* func = context_get(ctx, name->symbol);
         if (func == NULL) {
             printf("Unable to resolve symbol: %s\n", name->symbol);
-            return node_new_nil();
+            return node_nil();
         } else {
             if (func->type == NODE_NATIVE_FUNC) {
                 return func->func(ctx, args);
@@ -71,12 +71,12 @@ Node* eval_list(Context* ctx, Node* node) {
                 return eval_funcall(ctx, func, args);
             } else {
                 printf("%s is not a function.\n", name->symbol);
-                return node_new_nil();
+                return node_nil();
             }
         }
     } else {
         printf("Syntax error in funcall. (%d)\n", name->type);
-        return node_new_nil();
+        return node_nil();
     }
 }
 
