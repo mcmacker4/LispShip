@@ -2,6 +2,7 @@
 #include "../headers/list.h"
 
 #include <malloc.h>
+#include <stdio.h>
 
 LinkedList nodes = {
         .first=NULL,
@@ -79,14 +80,16 @@ void gc_sweep() {
     }
 }
 
-void gc_cleanup(Context* ctx) {
+void gc_cleanup(Context* ctx, Node* ast) {
     gc_set_zeroes();
     if (ctx != NULL)
         gc_visit_ctx(ctx);
+    if (ast != NULL)
+        gc_visit_node(ast);
     gc_sweep();
 }
 
-void gc_cleanup_all(Context* ctx) {
+void gc_cleanup_all() {
     LLItem* item = nodes.first;
     while (item != NULL) {
         LLItem* next = item->next;

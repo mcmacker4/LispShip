@@ -6,7 +6,7 @@
 
 void gc_register(Node* node);
 
-void gc_cleanup(Context* ctx);
+void gc_cleanup(Context* ctx, Node* ast);
 void gc_cleanup_all();
 
 #endif //LISPSHIT_GC_H

@@ -71,8 +71,8 @@ void tk_read_int(Tokenizer* tokenizer) {
 void tk_read_symbol(Tokenizer* tokenizer) {
     char buffer[31];
     size_t pos = 0;
-    while (tk_peek(tokenizer) >= 0x21 &&
-            tk_peek(tokenizer) <= 0x7E &&
+    while (tk_peek(tokenizer) >= 0x21 && // !
+            tk_peek(tokenizer) <= 0x7E && // ~
             tk_peek(tokenizer) != '(' &&
             tk_peek(tokenizer) != ')' &&
             tk_peek(tokenizer) != '.') {
@@ -120,4 +120,32 @@ List tokenize(const char* source, size_t len) {
         tk_skip_spaces(&tokenizer);
     }
     return tokenizer.tokens;
+}
+
+void tk_print_list(List* tokens) {
+    for (int i = 0; i < tokens->size; i++) {
+        Token* token = ((Token*) tokens->data) + i;
+        switch (token->type) {
+            case TK_LPAREN:
+                printf("LPAREN");
+                break;
+            case TK_RPAREN:
+                printf("RPAREN");
+                break;
+            case TK_DOT:
+                printf("DOT");
+                break;
+            case TK_QUOTE:
+                printf("QUOTE");
+                break;
+            case TK_INTEGER:
+                printf("INTEGER(%d)", token->integer);
+                break;
+            case TK_SYMBOL:
+                printf("SYMBOL(%s)", token->str);
+                break;
+        }
+        if (i < tokens->size - 1) printf(", ");
+    }
+    printf("\n");
 }

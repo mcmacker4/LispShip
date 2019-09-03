@@ -7,73 +7,77 @@
 #include <string.h>
 #include <malloc.h>
 
-void print_tokens(List* tokens) {
-    for (int i = 0; i < tokens->size; i++) {
-        Token* token = ((Token*) tokens->data) + i;
-        switch (token->type) {
-            case TK_LPAREN:
-                printf("LPAREN");
-                break;
-            case TK_RPAREN:
-                printf("RPAREN");
-                break;
-            case TK_DOT:
-                printf("DOT");
-                break;
-            case TK_QUOTE:
-                printf("QUOTE");
-                break;
-            case TK_INTEGER:
-                printf("INTEGER(%d)", token->integer);
-                break;
-            case TK_SYMBOL:
-                printf("SYMBOL(%s)", token->str);
-                break;
-        }
-        if (i < tokens->size - 1) printf(", ");
-    }
-    printf("\n");
-}
-
 #define LINE_MAX 128
 
-int main() {
+int main(int argc, const char** argv) {
 
-    char* linebuff = malloc(LINE_MAX);
-    Context ctx = eval_context_new();
+    if (argc > 1) {
 
-    while (1) {
+        const char* filename = argv[1];
 
-        printf("user> ");
-        fflush(stdout);
+        FILE* file = fopen(filename, "r");
 
-        char* line = fgets(linebuff, LINE_MAX, stdin);
+        fseek(file, 0, SEEK_END);
+        size_t length = ftell(file);
+        rewind(file);
 
-        if (strcmp(line, ".exit\n") == 0) {
-            printf("Goodbye.");
-            break;
-        }
+        char* buffer = malloc((length + 1) * sizeof(char));
+        length = fread(buffer, sizeof(char), length, file);
+        buffer[length] = 0;
 
-        List tokens = tokenize(linebuff, strlen(line));
-
+        List tokens = tokenize(buffer, length);
         Node* ast = parse(&tokens);
 
+        Context ctx = eval_context_new();
+
         while (ast->type != NODE_NIL) {
-            Node* result = eval(&ctx, ast->left);
-            node_print(result);
-            printf("\n");
+            eval(&ctx, ast->left);
             ast = ast->right;
+            gc_cleanup(&ctx, ast);
         }
 
-        list_free(&tokens);
+        free(buffer);
+        context_destroy(&ctx);
+        gc_cleanup_all();
 
-        gc_cleanup(&ctx);
+    } else {
+
+        char* linebuff = malloc(LINE_MAX);
+        Context ctx = eval_context_new();
+
+        while (1) {
+
+            printf("user=> ");
+            fflush(stdout);
+
+            char* line = fgets(linebuff, LINE_MAX, stdin);
+
+            if (strcmp(line, ".exit\n") == 0) {
+                printf("Goodbye.");
+                break;
+            }
+
+            List tokens = tokenize(linebuff, strlen(line));
+
+            Node* ast = parse(&tokens);
+
+            while (ast->type != NODE_NIL) {
+                Node* result = eval(&ctx, ast->left);
+                node_print(result);
+                printf("\n");
+                ast = ast->right;
+                gc_cleanup(&ctx, ast);
+            }
+
+            list_free(&tokens);
+
+        }
+
+        free(linebuff);
+        context_destroy(&ctx);
+        gc_cleanup_all();
 
     }
-
-    free(linebuff);
-    context_destroy(&ctx);
-    gc_cleanup_all();
 
     return 0;
 }

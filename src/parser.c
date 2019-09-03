@@ -31,7 +31,7 @@ Token* parser_consume(Parser* parser) {
 }
 
 #define SYNTAX_ERROR(str, token) {\
-    printf("(%zu:%zu) %s\n", (token)->line, (token)->column, str);\
+    printf("(%zu:%zu type:%d) %s\n", (token)->line, (token)->column, (token)->type, str);\
     exit(-1);\
 }
 

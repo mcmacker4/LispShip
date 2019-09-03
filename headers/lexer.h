@@ -25,4 +25,6 @@ typedef struct _Token {
 
 List tokenize(const char* source, size_t len);
 
+void tk_print_list(List* tokens);
+
 #endif //LISPSHIT_LEXER_H
