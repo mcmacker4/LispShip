@@ -23,4 +23,6 @@ Node* builtin_eq(Context* ctx, Node* args);
 Node* builtin_gt(Context* ctx, Node* args);
 Node* builtin_lt(Context* ctx, Node* args);
 
+Node* builtin_if(Context* ctx, Node* args);
+
 #endif //LISPSHIT_BUILTINS_H

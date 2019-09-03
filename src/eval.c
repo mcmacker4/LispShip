@@ -30,6 +30,7 @@ Context eval_context_new() {
     CTX_DEF_FUN(&ctx, "=", &builtin_eq);
     CTX_DEF_FUN(&ctx, ">", &builtin_gt);
     CTX_DEF_FUN(&ctx, "<", &builtin_lt);
+    CTX_DEF_FUN(&ctx, "if", &builtin_if);
 
 #undef CTX_DEF_FUN
 

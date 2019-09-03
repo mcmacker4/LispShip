@@ -224,3 +224,20 @@ Node* builtin_lt(Context* ctx, Node* args) {
     }
 }
 
+// (if (cond) (true) (false))
+Node* builtin_if(Context* ctx, Node* args) {
+    if (node_is_list(args) && node_list_length(args) == 3) {
+        Node* cond = node_car(args);
+        Node* texpr = node_car(node_cdr(args));
+        Node* fexpr = node_car(node_cdr(node_cdr(args)));
+        Node* condres = eval(ctx, cond);
+        if (condres == node_true()) {
+            return eval(ctx, texpr);
+        } else {
+            return eval(ctx, fexpr);
+        }
+    } else {
+        printf("Invalid number of arguments.\n");
+        return node_nil();
+    }
+}

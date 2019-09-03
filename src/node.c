@@ -64,11 +64,19 @@ Node* node_new_integer(int32_t integer) {
 }
 
 Node* node_new_symbol(String symbol) {
-    Node* node = node_new();
-    node->type = NODE_SYMBOL;
-    node->symbol = symbol;
-    node->props = 0;
-    return node;
+    if (symbol == string_intern("nil")) {
+        return node_nil();
+    } else if (symbol == string_intern("true")) {
+        return node_true();
+    } else if (symbol == string_intern("false")) {
+        return node_false();
+    } else {
+        Node* node = node_new();
+        node->type = NODE_SYMBOL;
+        node->symbol = symbol;
+        node->props = 0;
+        return node;
+    }
 }
 
 Node* node_new_func(Node* args, Node* body) {
