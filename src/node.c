@@ -18,7 +18,7 @@ Node* node_new() {
 
 Node* node_nil() {
     if (nil == NULL) {
-        nil = malloc(sizeof(Node));
+        nil = node_new();
         nil->type = NODE_NIL;
         nil->integer = 0;
         nil->props = 0;
@@ -28,7 +28,7 @@ Node* node_nil() {
 
 Node* node_true() {
     if (true == NULL) {
-        true = malloc(sizeof(Node));
+        true = node_new();
         true->type = NODE_SYMBOL;
         true->symbol = string_intern("true");
         true->props = 0;
@@ -38,7 +38,7 @@ Node* node_true() {
 
 Node* node_false() {
     if (false == NULL) {
-        false = malloc(sizeof(Node));
+        false = node_new();
         false->type = NODE_SYMBOL;
         false->symbol = string_intern("false");
         false->props = 0;
@@ -81,7 +81,7 @@ Node* node_new_func(Node* args, Node* body) {
 }
 
 Node* node_new_nfunc(NativeFunc func) {
-    Node* node = malloc(sizeof(Node));
+    Node* node = node_new();
     node->type = NODE_NATIVE_FUNC;
     node->func = func;
     node->props = 0;

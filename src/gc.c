@@ -12,11 +12,22 @@ void gc_register(Node* node) {
     linked_list_add(&nodes, node);
 }
 
+int gc_node_preserved(Node* node) {
+    return node->type == NODE_NATIVE_FUNC
+        || node == node_nil()
+        || node == node_true()
+        || node == node_false();
+}
+
 void gc_set_zeroes() {
     LLItem* item = nodes.first;
     while (item != NULL) {
         Node* node = item->value;
-        node->props &= (uint8_t) !NP_GCUSED;
+        if (gc_node_preserved(node)) {
+            node->props |= (uint8_t) NP_GCUSED;
+        } else {
+            node->props &= (uint8_t) !NP_GCUSED;
+        }
         item = item->next;
     }
 }
@@ -73,4 +84,14 @@ void gc_cleanup(Context* ctx) {
     if (ctx != NULL)
         gc_visit_ctx(ctx);
     gc_sweep();
+}
+
+void gc_cleanup_all(Context* ctx) {
+    LLItem* item = nodes.first;
+    while (item != NULL) {
+        LLItem* next = item->next;
+        free(item->value);
+        free(item);
+        item = next;
+    }
 }

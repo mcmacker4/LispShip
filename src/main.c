@@ -73,7 +73,7 @@ int main() {
 
     free(linebuff);
     context_destroy(&ctx);
-    gc_cleanup(NULL);
+    gc_cleanup_all();
 
     return 0;
 }
