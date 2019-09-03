@@ -76,7 +76,7 @@ Node* node_new_func(Node* args, Node* body) {
     node->type = NODE_FUNC;
     node->left = args;
     node->right = body;
-    node->props = 0;
+    node->props = NP_LIST;
     return node;
 }
 

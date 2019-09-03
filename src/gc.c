@@ -26,7 +26,7 @@ void gc_set_zeroes() {
         if (gc_node_preserved(node)) {
             node->props |= (uint8_t) NP_GCUSED;
         } else {
-            node->props &= (uint8_t) !NP_GCUSED;
+            node->props &= (uint8_t) ~NP_GCUSED;
         }
         item = item->next;
     }
