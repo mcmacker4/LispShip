@@ -32,6 +32,8 @@ Context eval_context_new() {
     CTX_DEF_FUN(&ctx, ">", &builtin_gt);
     CTX_DEF_FUN(&ctx, "<", &builtin_lt);
     CTX_DEF_FUN(&ctx, "if", &builtin_if);
+    CTX_DEF_FUN(&ctx, "len", &builtin_len);
+
 
 #undef CTX_DEF_FUN
 
@@ -50,11 +52,11 @@ void set_ctx_args(Context* ctx, Node* funcargs, Node* args) {
 
 Node* eval_funcall(Context* ctx, Node* func, Node* args) {
     Context context = context_new(ctx);
-    set_ctx_args(&context, func->left, args);
-    Node* ast = func->right;
+    set_ctx_args(&context, node_car(func), args);
+    Node* ast = node_cdr(func);
     Node* result = node_nil();
     while (ast->type != NODE_NIL) {
-        result = eval(&context, ast->left);
+        result = eval(&context, node_car(ast));
         ast = node_cdr(ast);
     }
     context_destroy(&context);
@@ -97,6 +99,7 @@ Node* eval_force(Context* ctx, Node* node) {
     switch (node->type) {
         case NODE_NIL:
         case NODE_INTEGER:
+        case NODE_STRING:
         case NODE_NATIVE_FUNC:
         case NODE_FUNC:
             return node;

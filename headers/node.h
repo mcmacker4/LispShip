@@ -13,8 +13,9 @@ typedef enum _NodeType {
     NODE_PAIR,
     NODE_INTEGER,
     NODE_SYMBOL,
+    NODE_STRING,
     NODE_FUNC,
-    NODE_NATIVE_FUNC
+    NODE_NATIVE_FUNC,
 } NodeType;
 
 
@@ -33,6 +34,7 @@ typedef struct _Node {
         };
         int32_t integer; // NODE_INTEGER
         String symbol; // NODE_SYMBOL
+        const char* string;
         struct _Node* (*func)(struct _Context*, struct _Node*); // NODE_NATIVE_FUNC
     };
 } Node;
@@ -46,6 +48,7 @@ Node* node_true();
 Node* node_false();
 Node* node_new_pair(Node* left, Node* right);
 Node* node_new_integer(int32_t integer);
+Node* node_new_string(const char* string);
 Node* node_new_symbol(String symbol);
 Node* node_new_func(Node* args, Node* body);
 Node* node_new_nfunc(NativeFunc func);

@@ -21,7 +21,7 @@ Node* node_nil() {
         nil = node_new();
         nil->type = NODE_NIL;
         nil->integer = 0;
-        nil->props = 0;
+        nil->props = NP_LIST;
     }
     return nil;
 }
@@ -59,6 +59,14 @@ Node* node_new_integer(int32_t integer) {
     Node* node = node_new();
     node->type = NODE_INTEGER;
     node->integer = integer;
+    node->props = 0;
+    return node;
+}
+
+Node* node_new_string(const char* string) {
+    Node* node = node_new();
+    node->type = NODE_STRING;
+    node->string = string;
     node->props = 0;
     return node;
 }
@@ -106,7 +114,7 @@ size_t node_list_length(Node* node) {
     size_t count = 0;
     while (iter->type != NODE_NIL) {
         count++;
-        iter = iter->right;
+        iter = node_cdr(iter);
     }
     return count;
 }
@@ -131,12 +139,12 @@ Node* node_cons(Node* left, Node* right) {
 void node_print_list(Node* node) {
     Node* list = node;
     printf("(");
-    while (list->right->type != NODE_NIL) {
-        node_print(list->left);
+    while (node_cdr(list)->type != NODE_NIL) {
+        node_print(node_car(list));
         printf(" ");
-        list = list->right;
+        list = node_cdr(list);
     }
-    node_print(list->left);
+    node_print(node_car(list));
     printf(")");
 }
 
@@ -156,9 +164,9 @@ void node_print(Node* node) {
                 node_print_list(node);
             } else {
                 printf("(");
-                node_print(node->left);
+                node_print(node_car(node));
                 printf(" . ");
-                node_print(node->right);
+                node_print(node_cdr(node));
                 printf(")");
             }
             break;
@@ -168,6 +176,9 @@ void node_print(Node* node) {
             break;
         case NODE_FUNC:
             printf("func");
+            break;
+        case NODE_STRING:
+            printf("%s", node->string);
             break;
     }
 }

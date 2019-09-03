@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "list.h"
+#include "string.h"
 
 typedef enum _TokenType {
     TK_LPAREN,
@@ -11,13 +12,15 @@ typedef enum _TokenType {
     TK_DOT,
     TK_QUOTE,
     TK_SYMBOL,
-    TK_INTEGER
+    TK_INTEGER,
+    TK_STRING,
 } TokenType;
 
 typedef struct _Token {
     TokenType type;
     union {
-        const char* str;
+        String symbol;
+        const char* string;
         int32_t integer;
     };
     size_t line, column;

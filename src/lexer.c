@@ -1,5 +1,4 @@
 #include "../headers/lexer.h"
-#include "../headers/string.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -14,10 +13,10 @@ typedef struct _Tokenizer {
     List tokens;
 } Tokenizer;
 
-Token token_str(Tokenizer* tokenizer, TokenType type, const char* str) {
+Token token_symbol(Tokenizer* tokenizer, TokenType type, String symbol) {
     Token token;
     token.type = type;
-    token.str = str;
+    token.symbol = symbol;
     token.line = tokenizer->line;
     token.column = tokenizer->column;
     return token;
@@ -27,6 +26,15 @@ Token token_int(Tokenizer* tokenizer, TokenType type, int32_t integer) {
     Token token;
     token.type = type;
     token.integer = integer;
+    token.line = tokenizer->line;
+    token.column = tokenizer->column;
+    return token;
+}
+
+Token token_string(Tokenizer* tokenizer, TokenType type, const char* string) {
+    Token token;
+    token.type = type;
+    token.string = string;
     token.line = tokenizer->line;
     token.column = tokenizer->column;
     return token;
@@ -43,13 +51,22 @@ Tokenizer tokenizer_new(const char* source, size_t len) {
     return tokenizer;
 }
 
+size_t tk_remaining(Tokenizer* tokenizer) {
+    return tokenizer->len - tokenizer->pos;
+}
+
 void tk_append_int(Tokenizer* tokenizer, TokenType type, int32_t integer) {
     Token token = token_int(tokenizer, type, integer);
     list_append(&tokenizer->tokens, &token, sizeof(Token));
 }
 
-void tk_append_str(Tokenizer* tokenizer, TokenType type, String str) {
-    Token token = token_str(tokenizer, type, str);
+void tk_append_symbol(Tokenizer* tokenizer, TokenType type, String str) {
+    Token token = token_symbol(tokenizer, type, str);
+    list_append(&tokenizer->tokens, &token, sizeof(Token));
+}
+
+void tk_append_string(Tokenizer* tokenizer, TokenType type, const char* string) {
+    Token token = token_string(tokenizer, type, string);
     list_append(&tokenizer->tokens, &token, sizeof(Token));
 }
 
@@ -83,7 +100,47 @@ void tk_read_symbol(Tokenizer* tokenizer) {
         }
     }
     buffer[pos] = 0;
-    tk_append_str(tokenizer, TK_SYMBOL, string_intern(buffer));
+    tk_append_symbol(tokenizer, TK_SYMBOL, string_intern(buffer));
+}
+
+char str_escape(char c) {
+    switch (c) {
+        case 'n': return '\n';
+        case 'r': return '\r';
+        case 't': return '\t';
+        default:
+            return c;
+    }
+}
+
+void tk_read_string(Tokenizer* tokenizer) {
+    // Count string length
+    tk_consume(tokenizer);
+    size_t pos = tokenizer->pos;
+    size_t length = 0;
+    while (tk_peek(tokenizer) != '"') {
+        if (tk_peek(tokenizer) == '\n' || tk_remaining(tokenizer) == 0) {
+            printf("(%zu:%zu) Syntax error: missing closing quotes for string.", tokenizer->pos, tokenizer->column);
+            exit(-1);
+        }
+        if (tk_peek(tokenizer) == '\\')
+            tokenizer->pos++;
+        tokenizer->pos++;
+        length++;
+    }
+    tokenizer->pos = pos;
+    // Create buffer
+    char* buffer = malloc((length + 1) * sizeof(char));
+    pos = 0;
+    while (tk_peek(tokenizer) != '"') {
+        char c = tk_consume(tokenizer);
+        if (c == '\\')
+            c = str_escape(tk_consume(tokenizer));
+        buffer[pos++] = c;
+    }
+    tk_consume(tokenizer);
+    buffer[length] = 0;
+    tk_append_string(tokenizer, TK_STRING, buffer);
 }
 
 void tk_skip_spaces(Tokenizer* tokenizer) {
@@ -112,6 +169,8 @@ List tokenize(const char* source, size_t len) {
         } else if (tk_peek((&tokenizer)) == '\'') {
             tk_consume(&tokenizer);
             tk_append_int(&tokenizer, TK_QUOTE, 0);
+        } else if (tk_peek((&tokenizer)) == '"') {
+            tk_read_string(&tokenizer);
         } else if (tk_peek((&tokenizer)) >= '0' && tk_peek((&tokenizer)) <= '9') {
             tk_read_int(&tokenizer);
         } else if (tk_peek((&tokenizer)) >= 0x21 && tk_peek((&tokenizer)) <= 0x7E) {
@@ -142,7 +201,10 @@ void tk_print_list(List* tokens) {
                 printf("INTEGER(%d)", token->integer);
                 break;
             case TK_SYMBOL:
-                printf("SYMBOL(%s)", token->str);
+                printf("SYMBOL(%s)", token->symbol);
+                break;
+            case TK_STRING:
+                printf("\"%s\"", token->string);
                 break;
         }
         if (i < tokens->size - 1) printf(", ");

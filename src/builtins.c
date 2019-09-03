@@ -2,13 +2,17 @@
 #include "../headers/eval.h"
 
 #include <stdio.h>
-
+#include <string.h>
 
 Node* builtin_print(Context* ctx, Node* args) {
-    if (node_is_list(args) && node_list_length(args) == 1) {
-        node_print(eval(ctx, args->left));
+    if (node_is_list(args)) {
+        Node* item = args;
+        while (item->type != NODE_NIL) {
+            node_print(eval(ctx, node_car(item)));
+            item = node_cdr(item);
+        }
     } else {
-        printf("Invalid argument.");
+        node_print(args);
     }
     return node_nil();
 }
@@ -92,7 +96,7 @@ Node* builtin_lambda(Context* ctx, Node* args) {
 
 Node* builtin_car(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
-        return node_car(eval(ctx, args->left));
+        return node_car(eval(ctx, node_car(args)));
     }
     printf("Invalid arguments.\n");
     return node_nil();
@@ -100,7 +104,7 @@ Node* builtin_car(Context* ctx, Node* args) {
 
 Node* builtin_cdr(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
-        return node_cdr(eval(ctx, args->left));
+        return node_cdr(eval(ctx, node_car(args)));
     }
     printf("Invalid arguments.\n");
     return node_nil();
@@ -214,6 +218,10 @@ Node* builtin_eq(Context* ctx, Node* args) {
                     return left->func == right->func ? node_true() : node_false();
                 return node_false();
             }
+            case NODE_STRING:
+                if (right->type == NODE_STRING)
+                    return strcmp(left->string, right->string) == 0 ? node_true() : node_false();
+                return node_false();
         }
     } else {
         printf("Invalid number of arguments.\n");
@@ -264,6 +272,25 @@ Node* builtin_if(Context* ctx, Node* args) {
             return eval(ctx, texpr);
         } else {
             return eval(ctx, fexpr);
+        }
+    } else {
+        printf("Invalid number of arguments.\n");
+        return node_nil();
+    }
+}
+
+
+Node* builtin_len(Context* ctx, Node* args) {
+    if (node_is_list(args) && node_list_length(args) == 1) {
+        Node* value = eval(ctx, node_car(args));
+        if (node_is_list(value)) {
+            return node_new_integer(node_list_length(value));
+        } else if (value->type == NODE_PAIR) {
+            return node_new_integer(2);
+        } else if (value->type == NODE_STRING) {
+            return node_new_integer(strlen(value->string));
+        } else {
+            return node_nil();
         }
     } else {
         printf("Invalid number of arguments.\n");

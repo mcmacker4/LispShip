@@ -2,7 +2,6 @@
 #include "../headers/list.h"
 
 #include <malloc.h>
-#include <stdio.h>
 
 LinkedList nodes = {
         .first=NULL,
@@ -39,11 +38,12 @@ void gc_visit_node(Node* node) {
     node->props |= NP_GCUSED;
     switch (node->type) {
         case NODE_NIL: case NODE_INTEGER:
-        case NODE_SYMBOL: case NODE_NATIVE_FUNC:
+        case NODE_SYMBOL: case NODE_STRING:
+        case NODE_NATIVE_FUNC:
             break;
         case NODE_FUNC: case NODE_PAIR:
-            gc_visit_node(node->left);
-            gc_visit_node(node->right);
+            gc_visit_node(node_car(node));
+            gc_visit_node(node_cdr(node));
             break;
     }
 }
@@ -66,6 +66,8 @@ void gc_sweep() {
             item->next = next->next;
             if (next == nodes.last)
                 nodes.last = item;
+            if (node->type == NODE_STRING)
+                free((void*) node->string);
             free(node);
             free(next);
         }

@@ -107,9 +107,11 @@ Node* parse_any(Parser* parser) {
             node->props |= NP_LITERAL;
             return node;
         case TK_SYMBOL:
-            return node_new_symbol(parser_consume(parser)->str);
+            return node_new_symbol(parser_consume(parser)->symbol);
         case TK_INTEGER:
             return node_new_integer(parser_consume(parser)->integer);
+        case TK_STRING:
+            return node_new_string(parser_consume(parser)->string);
         default:
             SYNTAX_ERROR("Unexpected token while parsing anything.", parser_peek(parser))
     }

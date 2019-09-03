@@ -7,8 +7,6 @@
 #include <string.h>
 #include <malloc.h>
 
-#define LINE_MAX 128
-
 int main(int argc, const char** argv) {
 
     if (argc > 1) {
@@ -31,8 +29,8 @@ int main(int argc, const char** argv) {
         Context ctx = eval_context_new();
 
         while (ast->type != NODE_NIL) {
-            eval(&ctx, ast->left);
-            ast = ast->right;
+            eval(&ctx, node_car(ast));
+            ast = node_cdr(ast);
             gc_cleanup(&ctx, ast);
         }
 
@@ -41,6 +39,8 @@ int main(int argc, const char** argv) {
         gc_cleanup_all();
 
     } else {
+
+#define LINE_MAX 128
 
         char* linebuff = malloc(LINE_MAX);
         Context ctx = eval_context_new();
@@ -62,10 +62,10 @@ int main(int argc, const char** argv) {
             Node* ast = parse(&tokens);
 
             while (ast->type != NODE_NIL) {
-                Node* result = eval(&ctx, ast->left);
+                Node* result = eval(&ctx, node_car(ast));
                 node_print(result);
                 printf("\n");
-                ast = ast->right;
+                ast = node_cdr(ast);
                 gc_cleanup(&ctx, ast);
             }
 
