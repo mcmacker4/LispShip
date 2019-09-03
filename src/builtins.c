@@ -20,13 +20,35 @@ Node* builtin_println(Context* ctx, Node* args) {
 }
 
 Node* builtin_def(Context* ctx, Node* args) {
-    Node* name = node_car(args);
-    if (name->type == NODE_SYMBOL) {
-        Node* result = eval(ctx, node_car(node_cdr(args)));
-        context_define(ctx, name->symbol, result);
-        return result;
+    if (node_is_list(args) && node_list_length(args) == 2) {
+        Node* name = node_car(args);
+        if (name->type == NODE_SYMBOL) {
+            Node* result = eval(ctx, node_car(node_cdr(args)));
+            context_define(ctx, name->symbol, result);
+            return result;
+        } else {
+            printf("Invalid arguments.\n");
+            return node_nil();
+        }
     } else {
-        printf("Invalid arguments.\n");
+        printf("Invalid number of arguments.\n");
+        return node_nil();
+    }
+}
+
+Node* builtin_defun(Context* ctx, Node* args) {
+    if (node_is_list(args) && node_list_length(args) >= 3) {
+        Node* name = node_car(args);
+        if (name->type == NODE_SYMBOL) {
+            Node* fun = builtin_lambda(ctx, node_cdr(args));
+            context_define(ctx, name->symbol, fun);
+            return fun;
+        } else {
+            printf("Invalid arguments.\n");
+            return node_nil();
+        }
+    } else {
+        printf("Invalid number of arguments.\n");
         return node_nil();
     }
 }
@@ -38,25 +60,32 @@ Node* builtin_eval(Context* ctx, Node* args) {
 
 Node* builtin_lambda(Context* ctx, Node* args) {
 
-    Node* fnargs = node_car(args);
+    if (node_is_list(args) && node_list_length(args) >= 2) {
 
-    // Check that fnargs is a list of symbols
-    Node* arg = fnargs;
-    while (node_car(arg)->type != NODE_NIL) {
-        if (node_car(arg)->type != NODE_SYMBOL) {
-            printf("Syntax error in lambda arguments.\n");
+        Node* fnargs = node_car(args);
+
+        // Check that fnargs is a list of symbols
+        Node* arg = fnargs;
+        while (node_car(arg)->type != NODE_NIL) {
+            if (node_car(arg)->type != NODE_SYMBOL) {
+                printf("Syntax error in lambda arguments.\n");
+                return node_nil();
+            }
+            arg = node_cdr(arg);
+        }
+
+        Node* body = node_cdr(args);
+        if (!node_is_list(body)) {
+            printf("Syntax error in lambda body.\n");
             return node_nil();
         }
-        arg = node_cdr(arg);
-    }
 
-    Node* body = node_cdr(args);
-    if (!node_is_list(body)) {
-        printf("Syntax error in lambda body.\n");
+        return node_new_func(fnargs, body);
+
+    } else {
+        printf("Invalid number of arguments.\n");
         return node_nil();
     }
-
-    return node_new_func(fnargs, body);
 
 }
 
