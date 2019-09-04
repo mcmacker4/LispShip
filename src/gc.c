@@ -95,7 +95,10 @@ void gc_cleanup_all() {
     LLItem* item = nodes.first;
     while (item != NULL) {
         LLItem* next = item->next;
-        free(item->value);
+        Node* node = item->value;
+        if (node->type == NODE_STRING)
+            free((char*) node->string);
+        free(node);
         free(item);
         item = next;
     }

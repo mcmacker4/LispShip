@@ -34,6 +34,8 @@ int main(int argc, const char** argv) {
             gc_cleanup(&ctx, ast);
         }
 
+        list_free(&tokens);
+
         free(buffer);
         context_destroy(&ctx);
         gc_cleanup_all();
