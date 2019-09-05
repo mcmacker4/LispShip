@@ -34,7 +34,7 @@ Context eval_context_new() {
     CTX_DEF_FUN(&ctx, "<", &builtin_lt);
     CTX_DEF_FUN(&ctx, "if", &builtin_if);
     CTX_DEF_FUN(&ctx, "len", &builtin_len);
-
+    CTX_DEF_FUN(&ctx, "substr", &builtin_substr);
 
 #undef CTX_DEF_FUN
 

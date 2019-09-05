@@ -1,6 +1,7 @@
 #include "../headers/builtins.h"
 #include "../headers/eval.h"
 
+#include <malloc.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -304,6 +305,29 @@ Node* builtin_len(Context* ctx, Node* args) {
         }
     } else {
         printf("Invalid number of arguments.\n");
+        return node_nil();
+    }
+}
+
+// substr(str, start, length)
+Node* builtin_substr(Context* ctx, Node* args) {
+    Node* str = eval(ctx, node_car(args));
+    Node* startNode = eval(ctx, node_car(node_cdr(args)));
+    Node* lenNode = eval(ctx, node_car(node_cdr(node_cdr(args))));
+    if (str->type == NODE_NIL)
+        return node_nil();
+    if (str->type == NODE_STRING && startNode->type == NODE_INTEGER && (lenNode->type == NODE_INTEGER || lenNode->type == NODE_NIL)) {
+        const char* string = str->string;
+        int64_t maxlen = strlen(string);
+        int64_t start = startNode->integer;
+        int64_t length = lenNode->type == NODE_INTEGER ? lenNode->integer : (strlen(string) - start);
+        if (length > maxlen) length = maxlen;
+        char* buffer = malloc(length + 1);
+        strncpy(buffer, string + start, length);
+        buffer[length] = 0;
+        return node_new_string(buffer);
+    } else {
+        printf("Invalid arguments.");
         return node_nil();
     }
 }
