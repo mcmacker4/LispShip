@@ -93,6 +93,16 @@ Node* builtin_lambda(Context* ctx, Node* args) {
 
 }
 
+Node* builtin_apply(Context* ctx, Node* args) {
+    Node* arg = args;
+    Node* result = node_nil();
+    while (arg->type != NODE_NIL) {
+        result = eval(ctx, node_car(arg));
+        arg = node_cdr(arg);
+    }
+    return result;
+}
+
 
 Node* builtin_car(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {

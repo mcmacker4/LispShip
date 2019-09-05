@@ -77,11 +77,12 @@ char tk_consume(Tokenizer* tokenizer) {
     return tokenizer->source[tokenizer->pos++];
 }
 
-void tk_read_int(Tokenizer* tokenizer) {
+void tk_read_int(Tokenizer* tokenizer, int neg) {
     int32_t value = 0;
     while (tokenizer->pos < tokenizer->len && tk_peek(tokenizer) >= '0' && tk_peek(tokenizer) <= '9') {
         value = value * 10 + (tk_consume(tokenizer) - '0');
     }
+    if (neg) value = -value;
     tk_append_int(tokenizer, TK_INTEGER, value);
 }
 
@@ -171,8 +172,18 @@ List tokenize(const char* source, size_t len) {
             tk_append_int(&tokenizer, TK_QUOTE, 0);
         } else if (tk_peek((&tokenizer)) == '"') {
             tk_read_string(&tokenizer);
+        } else if(tk_peek((&tokenizer)) == '-') {
+            tokenizer.pos++;
+            if (tk_peek((&tokenizer)) >= '0' && tk_peek((&tokenizer)) <= '9')  {
+                tokenizer.pos--;
+                tk_consume(&tokenizer);
+                tk_read_int(&tokenizer, 1);
+            } else {
+                tokenizer.pos--;
+                tk_read_symbol(&tokenizer);
+            }
         } else if (tk_peek((&tokenizer)) >= '0' && tk_peek((&tokenizer)) <= '9') {
-            tk_read_int(&tokenizer);
+            tk_read_int(&tokenizer, 0);
         } else if (tk_peek((&tokenizer)) >= 0x21 && tk_peek((&tokenizer)) <= 0x7E) {
             tk_read_symbol(&tokenizer);
         }

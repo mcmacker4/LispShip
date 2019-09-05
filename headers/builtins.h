@@ -10,6 +10,7 @@ Node* builtin_def(Context* ctx, Node* args);
 Node* builtin_defun(Context* ctx, Node* args);
 Node* builtin_eval(Context* ctx, Node* args);
 Node* builtin_lambda(Context* ctx, Node* args);
+Node* builtin_apply(Context* ctx, Node* args);
 
 Node* builtin_car(Context* ctx, Node* args);
 Node* builtin_cdr(Context* ctx, Node* args);

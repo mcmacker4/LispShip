@@ -32,7 +32,7 @@ typedef struct _Node {
             struct _Node* left;
             struct _Node* right;
         };
-        int32_t integer; // NODE_INTEGER
+        int64_t integer; // NODE_INTEGER
         String symbol; // NODE_SYMBOL
         const char* string;
         struct _Node* (*func)(struct _Context*, struct _Node*); // NODE_NATIVE_FUNC
@@ -47,7 +47,7 @@ Node* node_nil();
 Node* node_true();
 Node* node_false();
 Node* node_new_pair(Node* left, Node* right);
-Node* node_new_integer(int32_t integer);
+Node* node_new_integer(int64_t integer);
 Node* node_new_string(const char* string);
 Node* node_new_symbol(String symbol);
 Node* node_new_func(Node* args, Node* body);

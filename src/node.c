@@ -55,7 +55,7 @@ Node* node_new_pair(Node* left, Node* right) {
     return node;
 }
 
-Node* node_new_integer(int32_t integer) {
+Node* node_new_integer(int64_t integer) {
     Node* node = node_new();
     node->type = NODE_INTEGER;
     node->integer = integer;
@@ -154,7 +154,7 @@ void node_print(Node* node) {
             printf("nil");
             break;
         case NODE_INTEGER:
-            printf("%d", node->integer);
+            printf("%lld", node->integer);
             break;
         case NODE_SYMBOL:
             printf("%s", node->symbol);

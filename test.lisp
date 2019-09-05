@@ -1,4 +1,4 @@
-(def arg 6)
+(def arg 20)
 
 (println "Arg: " arg)
 
@@ -26,3 +26,12 @@
 (defun squared (a) (exp a 2))
 
 (println arg " squared: " (squared arg))
+
+(defun times (n body)
+    (if (> n 0)
+        (apply (body (- n 1)) (times (- n 1) body))
+        (eval body)
+    )
+)
+
+(times 5 (lambda (n) (println n)))

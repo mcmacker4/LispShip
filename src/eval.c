@@ -21,6 +21,7 @@ Context eval_context_new() {
     CTX_DEF_FUN(&ctx, "defun", &builtin_defun);
     CTX_DEF_FUN(&ctx, "eval", &builtin_eval);
     CTX_DEF_FUN(&ctx, "lambda", &builtin_lambda);
+    CTX_DEF_FUN(&ctx, "apply", &builtin_apply);
     CTX_DEF_FUN(&ctx, "car", &builtin_car);
     CTX_DEF_FUN(&ctx, "cdr", &builtin_cdr);
     CTX_DEF_FUN(&ctx, "cons", &builtin_cons);
