@@ -28,6 +28,10 @@ Node* builtin_def(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
         Node* name = node_car(args);
         if (name->type == NODE_SYMBOL) {
+            if (context_is_defined(ctx, name->symbol)) {
+                printf("%s is already defined.\n", name->symbol);
+                return node_nil();
+            }
             Node* result = eval(ctx, node_car(node_cdr(args)));
             context_define(ctx, name->symbol, result);
             return result;
@@ -45,6 +49,10 @@ Node* builtin_defun(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) >= 3) {
         Node* name = node_car(args);
         if (name->type == NODE_SYMBOL) {
+            if (context_is_defined(ctx, name->symbol)) {
+                printf("%s is already defined.\n", name->symbol);
+                return node_nil();
+            }
             Node* fun = builtin_lambda(ctx, node_cdr(args));
             context_define(ctx, name->symbol, fun);
             return fun;
@@ -138,6 +146,15 @@ Node* builtin_plus(Context* ctx, Node* args) {
         Node* right = eval(ctx, node_car(node_cdr(args)));
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer + right->integer);
+        } else if (left->type == NODE_STRING && right->type == NODE_STRING) {
+            size_t llen = strlen(left->string);
+            size_t rlen = strlen(right->string);
+            size_t length = llen + rlen;
+            char* buffer = malloc(length + 1);
+            strncpy(buffer, left->string, llen);
+            strncpy(buffer + llen, right->string, rlen);
+            buffer[length] = 0;
+            return node_new_string(buffer);
         } else {
             printf("Invalid argument types.\n");
             return node_nil();

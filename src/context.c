@@ -12,6 +12,10 @@ void context_define(Context* ctx, String name, struct _Node* node) {
     map_put(&ctx->variables, name, node);
 }
 
+int context_is_defined(Context* ctx, String name) {
+    return map_contains_key(&ctx->variables, name);
+}
+
 struct _Node* context_get(Context* ctx, String name) {
     void* result = map_get(&ctx->variables, name);
     if (result == NULL) {

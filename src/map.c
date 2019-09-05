@@ -27,6 +27,15 @@ void* map_get(Map* map, String key) {
     return NULL;
 }
 
+int map_contains_key(Map* map, String key) {
+    MapEntry* entry = map->first;
+    while (entry != NULL) {
+        if (entry->key == key) return 1;
+        entry = entry->next;
+    }
+    return 0;
+}
+
 MapEntry* map_entry_new(String key, void* value) {
     MapEntry* entry = malloc(sizeof(MapEntry));
     entry->key = key;

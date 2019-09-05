@@ -17,6 +17,7 @@ typedef struct _Map {
 Map map_new();
 
 void* map_get(Map* map, String key);
+int map_contains_key(Map* map, String key);
 
 void map_put(Map* map, String key, void* value);
 

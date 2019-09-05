@@ -14,6 +14,7 @@ typedef struct _Context {
 Context context_new(Context* parent);
 
 void context_define(Context* ctx, String name, struct _Node* node);
+int context_is_defined(Context* ctx, String name);
 
 struct _Node* context_get(Context* ctx, String name);
 
