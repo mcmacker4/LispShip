@@ -112,6 +112,23 @@ Node* builtin_apply(Context* ctx, Node* args) {
     return result;
 }
 
+Node* builtin_times(Context* ctx, Node* args) {
+    Node* times = eval(ctx, node_car(args));
+    Node* body = node_car(node_cdr(args));
+    if (times->type != NODE_INTEGER) {
+        printf("Invalid argument type.\n");
+        return node_nil();
+    }
+    if (times->integer <= 0) {
+        return node_nil();
+    }
+    Node* result = node_nil();
+    for (int64_t i = 0; i < times->integer; i++) {
+        result = eval(ctx, body);
+    }
+    return result;
+}
+
 
 Node* builtin_car(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 1) {
@@ -140,21 +157,12 @@ Node* builtin_cons(Context* ctx, Node* args) {
     }
 }
 
-Node* builtin_plus(Context* ctx, Node* args) {
+Node* builtin_add(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
         Node* left = eval(ctx, node_car(args));
         Node* right = eval(ctx, node_car(node_cdr(args)));
         if (left->type == NODE_INTEGER && right->type == NODE_INTEGER) {
             return node_new_integer(left->integer + right->integer);
-        } else if (left->type == NODE_STRING && right->type == NODE_STRING) {
-            size_t llen = strlen(left->string);
-            size_t rlen = strlen(right->string);
-            size_t length = llen + rlen;
-            char* buffer = malloc(length + 1);
-            strncpy(buffer, left->string, llen);
-            strncpy(buffer + llen, right->string, rlen);
-            buffer[length] = 0;
-            return node_new_string(buffer);
         } else {
             printf("Invalid argument types.\n");
             return node_nil();
@@ -165,7 +173,7 @@ Node* builtin_plus(Context* ctx, Node* args) {
     }
 }
 
-Node* builtin_minus(Context* ctx, Node* args) {
+Node* builtin_sub(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
         Node* left = eval(ctx, node_car(args));
         Node* right = eval(ctx, node_car(node_cdr(args)));
@@ -181,7 +189,7 @@ Node* builtin_minus(Context* ctx, Node* args) {
     }
 }
 
-Node* builtin_times(Context* ctx, Node* args) {
+Node* builtin_mul(Context* ctx, Node* args) {
     if (node_is_list(args) && node_list_length(args) == 2) {
         Node* left = eval(ctx, node_car(args));
         Node* right = eval(ctx, node_car(node_cdr(args)));
@@ -318,6 +326,29 @@ Node* builtin_len(Context* ctx, Node* args) {
         } else if (value->type == NODE_STRING) {
             return node_new_integer(strlen(value->string));
         } else {
+            return node_nil();
+        }
+    } else {
+        printf("Invalid number of arguments.\n");
+        return node_nil();
+    }
+}
+
+Node* builtin_concat(Context* ctx, Node* args) {
+    if (node_is_list(args) && node_list_length(args) == 2) {
+        Node* left = eval(ctx, node_car(args));
+        Node* right = eval(ctx, node_car(node_cdr(args)));
+        if (left->type == NODE_STRING && right->type == NODE_STRING) {
+            size_t llen = strlen(left->string);
+            size_t rlen = strlen(right->string);
+            size_t length = llen + rlen;
+            char* buffer = malloc(length + 1);
+            strncpy(buffer, left->string, llen);
+            strncpy(buffer + llen, right->string, rlen);
+            buffer[length] = 0;
+            return node_new_string(buffer);
+        } else {
+            printf("Invalid argument types.\n");
             return node_nil();
         }
     } else {

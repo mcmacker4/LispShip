@@ -22,18 +22,20 @@ Context eval_context_new() {
     CTX_DEF_FUN(&ctx, "eval", &builtin_eval);
     CTX_DEF_FUN(&ctx, "lambda", &builtin_lambda);
     CTX_DEF_FUN(&ctx, "apply", &builtin_apply);
+    CTX_DEF_FUN(&ctx, "times", &builtin_times);
     CTX_DEF_FUN(&ctx, "car", &builtin_car);
     CTX_DEF_FUN(&ctx, "cdr", &builtin_cdr);
     CTX_DEF_FUN(&ctx, "cons", &builtin_cons);
-    CTX_DEF_FUN(&ctx, "+", &builtin_plus);
-    CTX_DEF_FUN(&ctx, "-", &builtin_minus);
-    CTX_DEF_FUN(&ctx, "*", &builtin_times);
+    CTX_DEF_FUN(&ctx, "+", &builtin_add);
+    CTX_DEF_FUN(&ctx, "-", &builtin_sub);
+    CTX_DEF_FUN(&ctx, "*", &builtin_mul);
     CTX_DEF_FUN(&ctx, "/", &builtin_div);
     CTX_DEF_FUN(&ctx, "=", &builtin_eq);
     CTX_DEF_FUN(&ctx, ">", &builtin_gt);
     CTX_DEF_FUN(&ctx, "<", &builtin_lt);
     CTX_DEF_FUN(&ctx, "if", &builtin_if);
     CTX_DEF_FUN(&ctx, "len", &builtin_len);
+    CTX_DEF_FUN(&ctx, "concat", &builtin_concat);
     CTX_DEF_FUN(&ctx, "substr", &builtin_substr);
 
 #undef CTX_DEF_FUN

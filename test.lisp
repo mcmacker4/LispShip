@@ -27,11 +27,14 @@
 
 (println arg " squared: " (squared arg))
 
-(defun times (n body)
-    (if (> n 0)
-        (apply (body (- n 1)) (times (- n 1) body))
-        (eval body)
-    )
-)
+(println)
 
-(times 5 (lambda (n) (println n)))
+(times 3 (apply (println "Hey there!") (println "General Kenobi...")))
+
+(println)
+
+(def hello "Hello ")
+(def world "World")
+
+(println (concat hello world))
+(println "Length: " (len (concat hello world)))
